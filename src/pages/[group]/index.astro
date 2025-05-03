@@ -1,0 +1,70 @@
+---
+import CRDs from "@/crds";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const paths = new Array<{ params: { group: string } }>();
+  CRDs.forEach((_, group) => {
+    paths.push({
+      params: {
+        group,
+      },
+    });
+  });
+  return paths;
+}
+
+const { group } = Astro.params;
+
+const versions = CRDs.get(group)!.keys();
+---
+
+<BaseLayout>
+  <span slot="title">
+    <a href={`/${group}`} transition:name={group.replaceAll(".", "-")}>
+      {group}
+    </a>
+    <ul class="version-list">
+      {
+        versions?.map((version) => (
+          <li>
+            <a
+              href={`/${group}/${version}`}
+              transition:name={`${group.replaceAll(".", "-")}-${version}`}
+            >
+              {version}
+            </a>
+            <ul class="kind-list">
+              {CRDs.get(group)!
+                .get(version)!
+                .keys()
+                .map((kind) => (
+                  <li>
+                    <a
+                      href={`/${group}/${version}/${kind}`}
+                      transition:name={`${group.replaceAll(".", "-")}-${version}-${kind}`}
+                    >
+                      {kind}
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+  </span>
+
+  <style lang="scss">
+    @reference "../../styles/global.css";
+    ul {
+      @apply flex flex-col gap-4 p-8 pb-4 text-3xl font-bold text-gray-800;
+    }
+    .version-list {
+      @apply gap-2;
+    }
+    .kind-list {
+      @apply gap-1 pl-4;
+    }
+  </style>
+</BaseLayout>

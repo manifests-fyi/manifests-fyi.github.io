@@ -1,0 +1,48 @@
+---
+import Header from "@/components/Header.astro";
+import "@/styles/global.css";
+import { ClientRouter } from "astro:transitions";
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title} - manifests.fyi</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <Header {title} />
+    <main transition:animate="slide" transition:name="main">
+      <h1>
+        <slot name="title" />
+      </h1>
+      <slot />
+    </main>
+    <footer>
+      <p>
+        Created with ♥️by <a href="https://zmc.dev">Zach</a>
+      </p>
+    </footer>
+  </body>
+</html>
+
+<style lang="scss">
+  @reference "../styles/global.css";
+  :global(html) {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply bg-gray-200 text-gray-800;
+  }
+  h1 {
+    @apply p-4 pt-0 text-3xl font-bold text-gray-800;
+  }
+  main {
+    @apply p-4;
+  }
+</style>

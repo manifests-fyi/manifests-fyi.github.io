@@ -1,0 +1,59 @@
+---
+import CRDs from "@/crds";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const paths = new Array<{ params: { group: string; version: string } }>();
+  CRDs.forEach((versions, group) => {
+    versions.forEach((_, version) => {
+      paths.push({
+        params: {
+          group,
+          version,
+        },
+      });
+    });
+  });
+  return paths;
+}
+
+const { group, version } = Astro.params;
+
+const kinds = CRDs.get(group)!.get(version)!.keys();
+---
+
+<BaseLayout>
+  <span slot="title">
+    <a href={`/${group}`} transition:name={group.replaceAll(".", "-")}>
+      {group}
+    </a>
+    /
+    <a
+      href={`/${group}/${version}`}
+      transition:name={`${group.replaceAll(".", "-")}-${version}`}
+    >
+      {version}
+    </a>
+  </span>
+  <ul>
+    {
+      kinds?.map((kind) => (
+        <li>
+          <a
+            href={`/${group}/${version}/${kind}`}
+            transition:name={`${group.replaceAll(".", "-")}-${version}-${kind}`}
+          >
+            {kind}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>
+
+<style lang="scss">
+  @reference "../../../styles/global.css";
+  ul {
+    @apply flex flex-col gap-4 p-8 pb-4 text-3xl font-bold text-gray-800;
+  }
+</style>

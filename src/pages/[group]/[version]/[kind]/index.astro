@@ -1,0 +1,54 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import CRDs from "../../../../crds";
+import CRDDoc from "@/components/CRDDoc.astro";
+
+export async function getStaticPaths() {
+  const paths = new Array<{
+    params: { group: string; version: string; kind: string };
+  }>();
+  CRDs.forEach((versions, group) => {
+    versions.forEach((kinds, version) => {
+      kinds.forEach((_, kind) => {
+        paths.push({
+          params: {
+            group,
+            version,
+            kind,
+          },
+        });
+      });
+    });
+  });
+  return paths;
+}
+
+const { group, version, kind } = Astro.params;
+const crd = CRDs.get(group)!.get(version)!.get(kind)!;
+const description =
+  crd.spec.versions.find((v) => v.name === version)?.schema?.openAPIV3Schema
+    ?.description || "";
+---
+
+<BaseLayout title={`${group}/${version}/${kind}`} {description}>
+  <span slot="title">
+    <a href={`/${group}`} transition:name={group.replaceAll(".", "-")}>
+      {group}
+    </a>
+    /
+    <a
+      href={`/${group}/${version}`}
+      transition:name={`${group.replaceAll(".", "-")}-${version}`}
+    >
+      {version}
+    </a>
+    /
+    <a
+      href={`/${group}/${version}/${kind}`}
+      transition:name={`${group.replaceAll(".", "-")}-${version}-${kind}`}
+    >
+      {kind}
+    </a>
+  </span>
+  <CRDDoc crd={CRDs.get(group)!.get(version)!.get(kind)!} {version} />
+</BaseLayout>

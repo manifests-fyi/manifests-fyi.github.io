@@ -1,0 +1,200 @@
+---
+import type { V1CustomResourceDefinition } from "@kubernetes/client-node";
+import { openapiSchemaToJsonSchema } from "@openapi-contrib/openapi-schema-to-json-schema";
+import { Markdown } from "astro-remote";
+
+interface Props {
+  crd: V1CustomResourceDefinition;
+  version: string;
+}
+
+const { crd, version } = Astro.props;
+const spec = crd.spec.versions.find((v) => v.name === version);
+const schema = spec?.schema?.openAPIV3Schema;
+const jsonSchema = schema ? openapiSchemaToJsonSchema(schema) : null;
+type JSONSchema4 = ReturnType<typeof openapiSchemaToJsonSchema>;
+
+function flattenProperties(schema: JSONSchema4, prefix = "") {
+  if (!schema || !schema.properties) return [];
+
+  let result: {
+    path: string;
+    type: string | string[] | undefined;
+    description: string;
+    required: boolean;
+  }[] = [];
+
+  Object.entries(schema.properties).forEach(([key, value]) => {
+    const path = prefix ? `${prefix}.${key}` : key;
+
+    let propType = value.type;
+    if (value.anyOf && Array.isArray(value.anyOf)) {
+      propType = value.anyOf
+        .map((item) => item.type!)
+        .filter(Boolean)
+        .flat();
+    }
+
+    result.push({
+      path,
+      type: propType,
+      description: value.description || "",
+      required:
+        typeof schema.required === "boolean"
+          ? schema.required
+          : Array.isArray(schema.required)
+            ? schema.required.includes(key)
+            : false,
+    });
+
+    if (value.properties) {
+      result = [...result, ...flattenProperties(value, path)];
+    }
+
+    if (value.type === "array" && value.items) {
+      result = [...result, ...flattenProperties(value.items, `${path}[]`)];
+    }
+
+    if (value.anyOf && Array.isArray(value.anyOf)) {
+      value.anyOf.forEach((item) => {
+        if (item.properties) {
+          result = [...result, ...flattenProperties(item, path)];
+        }
+      });
+    }
+  });
+
+  return result;
+}
+
+const flattenedProperties = jsonSchema ? flattenProperties(jsonSchema) : [];
+---
+
+<ul class="property-list">
+  {
+    flattenedProperties.map((prop) => (
+      <li id={prop.path} class="property-item">
+        <header>
+          <h2>
+            <a href={`#${prop.path}`}>{prop.path}</a>
+          </h2>
+          <div class="badges">
+            <span
+              class={`property-type ${
+                prop.type
+                  ? Array.isArray(prop.type)
+                    ? "union"
+                    : prop.type
+                  : "undefined"
+              }`}
+            >
+              {prop.type
+                ? Array.isArray(prop.type)
+                  ? prop.type.join(" | ")
+                  : prop.type
+                : "undefined"}
+            </span>
+            {prop.required && (
+              <span class="property-type required">Required</span>
+            )}
+          </div>
+        </header>
+        {prop.description && (
+          <div class="property-description">
+            <Markdown content={prop.description} />
+          </div>
+        )}
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  @reference "../styles/global.css";
+  .property-list {
+    @apply m-0 flex list-none flex-col gap-4 p-4;
+  }
+
+  .property-list li.property-item {
+    @apply flex flex-col gap-2 overflow-auto rounded-xl border border-gray-200 bg-white p-4 shadow-sm;
+    @apply flex-wrap;
+  }
+
+  .property-item header {
+    @apply flex flex-wrap items-center justify-between gap-4;
+  }
+
+  .property-item div.badges {
+    @apply flex flex-wrap justify-start gap-4;
+  }
+
+  .property-list h2 {
+    @apply flex flex-wrap items-center gap-4 font-mono text-2xl font-bold text-wrap text-gray-800;
+  }
+
+  .property-type {
+    @apply rounded-sm p-1 px-2 font-mono text-sm font-bold text-gray-800 transition-colors duration-200 ease-in-out;
+  }
+
+  .property-type.string {
+    @apply bg-blue-300 text-blue-800;
+  }
+
+  .property-type.integer,
+  .property-type.number {
+    @apply bg-green-300 text-green-800;
+  }
+
+  .property-type.boolean {
+    @apply bg-yellow-300 text-yellow-800;
+  }
+
+  .property-type.object {
+    @apply bg-purple-300 text-purple-800;
+  }
+
+  .property-type.array {
+    @apply bg-orange-300 text-orange-800;
+  }
+
+  .property-type.union {
+    @apply bg-gray-300 text-gray-800;
+  }
+
+  .property-type.required {
+    @apply bg-red-300 text-red-800;
+  }
+
+  .property-description {
+    @apply prose lg:prose-xl text-wrap;
+  }
+
+  .property-description :global(p:first-of-type) {
+    @apply my-0;
+  }
+  .property-description :global(p:last-of-type) {
+    @apply my-0;
+  }
+
+  .property-description :global(pre) {
+    @apply my-4 rounded-xl border border-gray-300 bg-gray-200 p-4 shadow-inner;
+    @apply overflow-hidden;
+  }
+  .property-description :global(code) {
+    @apply rounded-sm border border-gray-300 bg-gray-200 px-2 py-1 font-mono text-sm font-bold text-gray-800;
+    @apply transition-colors duration-200 ease-in-out;
+  }
+  .property-description :global(code:hover) {
+    @apply bg-gray-300 text-gray-900;
+  }
+  .property-description :global(pre code) {
+    @apply m-0 rounded-none border-none bg-transparent p-0;
+    @apply text-gray-800;
+  }
+  .property-description :global(pre code:hover) {
+    @apply bg-gray-200 text-gray-900;
+  }
+  .property-description :global(ul) {
+    @apply list-inside list-disc pl-4;
+  }
+</style>
