@@ -16,7 +16,11 @@ const { title, description } = Astro.props;
     <ClientRouter />
   </head>
   <body>
-    <Header {title} />
+    <header>
+      <h2>
+        <a href="/"> manifests.fyi </a>
+      </h2>
+    </header>
     <main transition:animate="slide" transition:name="main">
       <h1>
         <slot name="title" />
@@ -33,16 +37,35 @@ const { title, description } = Astro.props;
 
 <style lang="scss">
   @reference "../styles/global.css";
+  :global(:root) {
+    @apply lg:text-2xl;
+  }
   :global(html) {
     @apply scroll-smooth;
   }
   body {
-    @apply bg-gray-200 text-gray-800;
+    @apply min-h-screen grid-rows-[auto,1fr,auto] bg-gray-200 text-gray-800;
+  }
+  header {
+    @apply flex bg-gray-800 p-8 text-white;
+  }
+
+  header h2 {
+    @apply text-4xl font-bold text-gray-200;
   }
   h1 {
     @apply p-4 pt-0 text-3xl font-bold text-gray-800;
   }
   main {
     @apply p-4;
+  }
+  footer {
+    @apply flex items-center justify-center gap-2 p-4 text-gray-800;
+  }
+
+  header,
+  main,
+  footer {
+    @apply px-[max(1rem,calc(calc(100svw-1200px)/2))];
   }
 </style>
