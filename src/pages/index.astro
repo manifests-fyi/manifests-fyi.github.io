@@ -6,140 +6,63 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
 <BaseLayout
   title="manifests.fyi"
-  desription="The only Kubernetes CRD reference you need."
+  description="The only Kubernetes CRD reference you need."
 >
   <Search
     client:only="svelte"
     resources={CRDs.keys()
-      .flatMap((group) =>
-        CRDs.get(group)!
-          .keys()
-          .flatMap((version) =>
-            CRDs.get(group)!
-              .get(version)!
-              .keys()
-              .map((kind) => ({
-                group,
-                version,
-                kind,
-                name: `/${group}/${version}/${kind}`,
-              })),
-          ),
-      )
-      .toArray()}
-  />
-  {
-    /*
-  <span slot="title" transition:animate="none">All Resources</span>
-  <ul class="group-list">
-    {
-      Array.from(CRDs.keys()).map((group) => (
-        (
-      (
-      (
-      (
-      (
-      (
-      (
-      (
-      (
-      (
-      (
-      (
-      <li>
-        <a
-          href={`/${group}`}
-          transition:name={group.replaceAll(".", "-")}
-        >
-          {group}
-        </a>
-      </li>
-      <ul class="version-list">
-        {
-          CRDs.get(group)!.keys().map((version) => (
-            <li>
-              <a
-                href={`/${group}/${version}`}
-                transition:name={`${group.replaceAll(".", "-")}-${version}`}
-              >{version}</a>
-              <ul class="kind-list">
-                {
-                  CRDs.get(group)!
+    .flatMap((group) =>
+      CRDs.get(group)!
+        .keys()
+        .flatMap((version) =>
+          CRDs.get(group)!
             .get(version)!
             .keys()
-            .map((kind) => (
-                    <li>
-                      <a
-                        href={`/${group}/${version}/${kind}`}
-                        transition:name={`${group.replaceAll(".", "-")}-${version}-${kind}`}
-                      >{kind}</a>
-                    </li>
-                  ))
-                }
-              </ul>
-            </li>
-          ))
-        }
-      </ul>
+            .map((kind) => ({
+              group,
+              version,
+              kind,
+              name: `${group}/${version}/${kind}`,
+            }))
+        )
     )
-    )
-    )
-    )
-    )
-    )
-    )
-    )
-    )
-    )
-    )
-    )
+    .toArray()}
+  />
+  <span slot="title" transition:animate="none" class="sr-only">
+    All Resources
+  </span>
+  <ul class="group-list sr-only">
+    {
+      Array.from(CRDs.keys()).map((group) => (
+        <li>
+          <a href={`/${group}`}>
+            {group}
+          </a>
+        </li>
+        <ul class="version-list">
+          {
+            CRDs.get(group)!.keys().map((version) => (
+              <li>
+                <a href={`/${group}/${version}`}>{version}</a>
+                <ul class="kind-list">
+                  {
+                    CRDs.get(group)!
+              .get(version)!
+              .keys()
+              .map((kind) => (
+                      <li>
+                        <a href={`/${group}/${version}/${kind}`}>{kind}</a>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </li>
+            ))
+          }
+        </ul>
       ))
     }
   </ul>
-      */
-  }
-  <!-- <span slot="title" transition:animate="none">All Resources</span> -->
-  <!-- <ul class="group-list"> -->
-  <!--   { -->
-  <!--     Array.from(CRDs.keys()).map((group) => ( -->
-  <!--       <li> -->
-  <!--         <a -->
-  <!--           href={`/${group}`} -->
-  <!--           transition:name={group.replaceAll(".", "-")} -->
-  <!--         > -->
-  <!--           {group} -->
-  <!--         </a> -->
-  <!--       </li> -->
-  <!--       <ul class="version-list"> -->
-  <!--         { -->
-  <!--           CRDs.get(group)!.keys().map((version) => ( -->
-  <!--             <li> -->
-  <!--               <a -->
-  <!--                 href={`/${group}/${version}`} -->
-  <!--                 transition:name={`${group.replaceAll(".", "-")}-${version}`} -->
-  <!--               >{version}</a> -->
-  <!--               <ul class="kind-list"> -->
-  <!--                 { -->
-  <!--                   CRDs.get(group)! -->
-  <!--             .get(version)! -->
-  <!--             .keys() -->
-  <!--             .map((kind) => ( -->
-  <!--                     <li> -->
-  <!--                       <a -->
-  <!--                         href={`/${group}/${version}/${kind}`} -->
-  <!--                         transition:name={`${group.replaceAll(".", "-")}-${version}-${kind}`} -->
-  <!--                       >{kind}</a> -->
-  <!--                     </li> -->
-  <!--                   )) -->
-  <!--                 } -->
-  <!--               </ul> -->
-  <!--             </li> -->
-  <!--           )) -->
-  <!--         } -->
-  <!--       </ul> -->
-  <!--     )) -->
-  <!--   } -->
-  <!-- </ul> -->
 </BaseLayout>
 
 <style lang="scss">
