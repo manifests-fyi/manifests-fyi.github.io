@@ -18,6 +18,7 @@ function flattenProperties(schema: JSONSchema4, prefix = "") {
   if (!schema || !schema.properties) return [];
 
   let result: {
+    pathElements: string[];
     path: string;
     type: string | string[] | undefined;
     description: string;
@@ -25,6 +26,7 @@ function flattenProperties(schema: JSONSchema4, prefix = "") {
   }[] = [];
 
   Object.entries(schema.properties).forEach(([key, value]) => {
+    const pathElements = prefix ? [...prefix.split("."), key] : [key];
     const path = prefix ? `${prefix}.${key}` : key;
 
     let propType = value.type;
@@ -36,6 +38,7 @@ function flattenProperties(schema: JSONSchema4, prefix = "") {
     }
 
     result.push({
+      pathElements,
       path,
       type: propType,
       description: value.description || "",
@@ -75,9 +78,6 @@ const flattenedProperties = jsonSchema ? flattenProperties(jsonSchema) : [];
     flattenedProperties.map((prop) => (
       <li id={prop.path} class="property-item">
         <header>
-          <h2>
-            <a href={`#${prop.path}`}>{prop.path}</a>
-          </h2>
           <div class="badges">
             <span
               class={`property-type ${
@@ -95,9 +95,22 @@ const flattenedProperties = jsonSchema ? flattenProperties(jsonSchema) : [];
                 : "undefined"}
             </span>
             {prop.required && (
-              <span class="property-type required">Required</span>
+              <span class="property-type required">required</span>
             )}
           </div>
+          <h2>
+            <a href={`#${prop.path}`}>
+              {prop.pathElements.map((el, i) => (
+                <span
+                  class={`property-path ${
+                    i === prop.pathElements.length - 1 ? "last" : ""
+                  }`}
+                >
+                  .{el}
+                </span>
+              ))}
+            </a>
+          </h2>
         </header>
         {prop.description && (
           <div class="property-description">
@@ -112,16 +125,17 @@ const flattenedProperties = jsonSchema ? flattenProperties(jsonSchema) : [];
 <style>
   @reference "../styles/global.css";
   .property-list {
-    @apply m-0 flex list-none flex-col gap-4 p-4;
+    @apply m-0 flex list-none flex-col gap-4 p-0;
   }
 
   .property-list li.property-item {
-    @apply flex flex-col gap-2 overflow-auto rounded-xl border border-gray-200 bg-white p-4 shadow-sm;
+    @apply flex flex-col gap-2 overflow-auto rounded-xl border border-gray-200 bg-white shadow-sm;
+    @apply p-2 md:p-4;
     @apply flex-wrap;
   }
 
   .property-item header {
-    @apply flex flex-wrap items-center justify-between gap-4;
+    @apply flex flex-col flex-wrap justify-between gap-4;
   }
 
   .property-item div.badges {
@@ -129,7 +143,13 @@ const flattenedProperties = jsonSchema ? flattenProperties(jsonSchema) : [];
   }
 
   .property-list h2 {
-    @apply flex flex-wrap items-center gap-4 font-mono text-2xl font-bold text-wrap text-gray-800;
+    @apply flex flex-wrap items-center gap-4 font-mono font-bold text-wrap text-gray-800;
+    @apply text-sm md:text-2xl;
+    word-break: break-word;
+  }
+
+  .property-list h2 a {
+    @apply flex flex-wrap items-center gap-0;
   }
 
   .property-type {
@@ -137,36 +157,36 @@ const flattenedProperties = jsonSchema ? flattenProperties(jsonSchema) : [];
   }
 
   .property-type.string {
-    @apply bg-blue-300 text-blue-800;
+    @apply border border-blue-500 bg-blue-100 text-blue-900;
   }
 
   .property-type.integer,
   .property-type.number {
-    @apply bg-green-300 text-green-800;
+    @apply border border-green-500 bg-green-100 text-green-900;
   }
 
   .property-type.boolean {
-    @apply bg-yellow-300 text-yellow-800;
+    @apply border border-yellow-500 bg-yellow-100 text-yellow-900;
   }
 
   .property-type.object {
-    @apply bg-purple-300 text-purple-800;
+    @apply border border-purple-500 bg-purple-100 text-purple-900;
   }
 
   .property-type.array {
-    @apply bg-orange-300 text-orange-800;
+    @apply border border-orange-500 bg-orange-100 text-orange-900;
   }
 
   .property-type.union {
-    @apply bg-gray-300 text-gray-800;
+    @apply border border-gray-500 bg-gray-100 text-gray-900;
   }
 
   .property-type.required {
-    @apply bg-red-300 text-red-800;
+    @apply border border-red-500 bg-red-100 text-red-900;
   }
 
   .property-description {
-    @apply prose lg:prose-xl text-wrap;
+    @apply prose-sm md:prose lg:prose-xl text-wrap;
   }
 
   .property-description :global(p:first-of-type) {
@@ -183,6 +203,10 @@ const flattenedProperties = jsonSchema ? flattenProperties(jsonSchema) : [];
   .property-description :global(code) {
     @apply rounded-sm border border-gray-300 bg-gray-200 px-2 py-1 font-mono text-sm font-bold text-gray-800;
     @apply transition-colors duration-200 ease-in-out;
+  }
+  .property-description :global(code::before),
+  .property-description :global(code::after) {
+    @apply content-[""];
   }
   .property-description :global(code:hover) {
     @apply bg-gray-300 text-gray-900;
