@@ -22,7 +22,11 @@ const { group, version } = Astro.params;
 const kinds = CRDs.get(group)!.get(version)!.keys();
 ---
 
-<BaseLayout>
+<BaseLayout
+  title={`${group}/${version}`}
+  description=`${group}/${version} CRDs`
+  }
+>
   <span slot="title">
     <a href={`/${group}`} transition:name={group.replaceAll(".", "-")}>
       {group}

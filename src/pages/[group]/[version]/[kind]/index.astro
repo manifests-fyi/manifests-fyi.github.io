@@ -27,7 +27,7 @@ const { group, version, kind } = Astro.params;
 const crd = CRDs.get(group)!.get(version)!.get(kind)!;
 const description =
   crd.spec.versions.find((v) => v.name === version)?.schema?.openAPIV3Schema
-    ?.description || "";
+    ?.description || `${group}/${version}/${kind} CRD documentation`;
 ---
 
 <BaseLayout title={`${group}/${version}/${kind}`} {description}>
