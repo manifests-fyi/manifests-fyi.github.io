@@ -14,6 +14,7 @@ const { title, description } = Astro.props;
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <title>{title} - manifests.fyi</title>
@@ -22,7 +23,10 @@ const { title, description } = Astro.props;
   <body>
     <header>
       <h2>
-        <a href="/"> manifests.fyi </a>
+        <span class="sr-only">manifests.fyi</span>
+        <a href="/">
+          <img src="/manifests-fyi-logotype.svg" alt="manifests.fyi logotype" />
+        </a>
       </h2>
     </header>
     <main transition:animate="slide" transition:name="main">
@@ -56,6 +60,10 @@ const { title, description } = Astro.props;
 
   header h2 {
     @apply text-2xl font-bold text-gray-200 md:text-4xl;
+  }
+
+  header h2 img {
+    @apply max-h-16 max-w-[calc(100vw-2rem)] md:max-h-24;
   }
   h1 {
     @apply p-4 pt-0 text-3xl font-bold text-gray-800;
