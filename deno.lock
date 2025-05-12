@@ -13,6 +13,7 @@
     "npm:astro-remote@~0.3.4": "0.3.4_marked@12.0.2",
     "npm:astro@^5.7.10": "5.7.11_@types+node@22.15.14_sass-embedded@1.87.0_yaml@2.7.1_vite@6.3.5__@types+node@22.15.14__sass-embedded@1.87.0__yaml@2.7.1__picomatch@4.0.2_zod@3.24.4_typescript@5.8.3",
     "npm:autoprefixer@^10.4.21": "10.4.21_postcss@8.5.3",
+    "npm:new-github-issue-url@^1.1.0": "1.1.0",
     "npm:prettier-plugin-astro@~0.14.1": "0.14.1",
     "npm:prettier-plugin-tailwindcss@~0.6.11": "0.6.11_prettier@3.5.3_prettier-plugin-astro@0.14.1",
     "npm:prettier@^3.5.3": "3.5.3",
@@ -2443,6 +2444,9 @@
     "neotraverse@0.6.18": {
       "integrity": "sha512-Z4SmBUweYa09+o6pG+eASabEpP6QkQ70yHj351pQoEXIs8uHbaU2DWVmzBANKgflPa47A50PtB2+NgRpQvr7vA=="
     },
+    "new-github-issue-url@1.1.0": {
+      "integrity": "sha512-R4r7f3Q/SzlI4Q/J/0KPRf+bwxYk7BiaYEy0zTVqpikA5F1CwCHgwVReKhpYRlG1besvLdtABQGQRhFy8CyT3g=="
+    },
     "nlcst-to-string@4.0.0": {
       "integrity": "sha512-YKLBCcUYKAg0FNlOBT6aI91qFmSiFKiluk655WzPF+DDMA02qIyy8uiRqI8QXtcFpEvll12LpL5MXqEmAZ+dcA==",
       "dependencies": [
@@ -3573,6 +3577,7 @@
         "npm:astro-remote@~0.3.4",
         "npm:astro@^5.7.10",
         "npm:autoprefixer@^10.4.21",
+        "npm:new-github-issue-url@^1.1.0",
         "npm:prettier-plugin-astro@~0.14.1",
         "npm:prettier-plugin-tailwindcss@~0.6.11",
         "npm:prettier@^3.5.3",
