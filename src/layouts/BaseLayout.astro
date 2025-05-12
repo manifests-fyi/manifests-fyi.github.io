@@ -1,7 +1,11 @@
 ---
-import Header from "@/components/Header.astro";
 import "@/styles/global.css";
 import { ClientRouter } from "astro:transitions";
+
+interface Props {
+  title: string;
+  description: string;
+}
 
 const { title, description } = Astro.props;
 ---
@@ -29,7 +33,7 @@ const { title, description } = Astro.props;
     </main>
     <footer>
       <p>
-        Created with ♥️by <a href="https://zmc.dev">Zach</a>
+        Created with ♥️ by <a href="https://zmc.dev">Zach</a>
       </p>
     </footer>
   </body>
@@ -51,7 +55,7 @@ const { title, description } = Astro.props;
   }
 
   header h2 {
-    @apply text-4xl font-bold text-gray-200;
+    @apply text-2xl font-bold text-gray-200 md:text-4xl;
   }
   h1 {
     @apply p-4 pt-0 text-3xl font-bold text-gray-800;
