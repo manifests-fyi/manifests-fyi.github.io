@@ -29,13 +29,32 @@ function flattenProperties(schema: JSONSchema4, prefix = "") {
     const pathElements = prefix ? [...prefix.split("."), key] : [key];
     const path = prefix ? `${prefix}.${key}` : key;
 
-    let propType = value.type;
-    if (value.anyOf && Array.isArray(value.anyOf)) {
+    let propType = value.type; // Initial type
+
+    // Handle array types first
+    if (value.type === "array") {
+      if (
+        value.items &&
+        typeof value.items.type === "string" &&
+        (value.items.type === "string" ||
+          value.items.type === "integer" ||
+          value.items.type === "number" ||
+          value.items.type === "boolean") &&
+        !value.items.properties &&
+        !value.items.anyOf // Ensure it's a simple type, not an object or union within items
+      ) {
+        propType = `array(${value.items.type})`;
+      } else {
+        // For complex arrays (array of objects, array of unions, etc.), or if item type is not simple
+        propType = "array";
+      }
+    } else if (value.anyOf && Array.isArray(value.anyOf)) { // Handle anyOf for non-array types
       propType = value.anyOf
         .map((item) => item.type!)
         .filter(Boolean)
         .flat();
     }
+    // If it's not an array and not anyOf, propType remains value.type as initialized.
 
     result.push({
       pathElements,
