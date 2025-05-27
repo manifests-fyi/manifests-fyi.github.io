@@ -10,14 +10,14 @@
     "organize-crds": "node src/scripts/organize-crds.ts"
   },
   "dependencies": {
-    "@astrojs/svelte": "^7.0.13",
+    "@astrojs/svelte": "7.1.0",
     "@kubernetes/client-node": "^1.1.2",
     "@nozbe/microfuzz": "^1.0.0",
     "@openapi-contrib/openapi-schema-to-json-schema": "^5.1.0",
     "@readme/openapi-parser": "^4.0.0",
     "@tailwindcss/vite": "^4.1.5",
     "@ts-stack/markdown": "^1.5.0",
-    "astro": "^5.7.10",
+    "astro": "5.8.0",
     "astro-remote": "^0.3.4",
     "autoprefixer": "^10.4.21",
     "new-github-issue-url": "^1.1.0",
